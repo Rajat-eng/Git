@@ -4,3 +4,4 @@ Third rebase
 Fourth rebase
 local reabse
 fifth change
+stash change
