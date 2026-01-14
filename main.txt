@@ -1,7 +1,33 @@
-first commit
-second commit direct
-Third rebase
-Fourth rebase
-local reabse
-fifth change
-pre hook
+#!/bin/sh
+
+# Exit if no stash exists
+if ! git stash list | grep -q .; then
+  exit 0
+fi
+
+echo "📦 Git stash detected:"
+git stash list | head -n 1
+echo ""
+
+
+printf "❓ Apply latest stash before push? (y/n): " > /dev/tty
+read answer < /dev/tty
+
+if [ "$answer" = "y" ] || [ "$answer" = "Y" ]; then
+  echo "👉 Applying stash..." > /dev/tty
+  git stash apply stash@{0}
+
+  if git diff --name-only --diff-filter=U | grep -q .; then
+    echo "" > /dev/tty
+    echo "❌ Merge conflicts detected after applying stash." > /dev/tty
+    echo "Resolve conflicts, then push manually." > /dev/tty
+    exit 1
+  fi
+
+  echo "✅ Stash applied successfully." > /dev/tty
+else
+  echo "➡️ Skipping stash apply." > /dev/tty
+fi
+
+exit 0
+
